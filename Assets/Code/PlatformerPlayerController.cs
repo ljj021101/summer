@@ -82,6 +82,7 @@ public class PlatformerPlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
         if (animator == null)
         {

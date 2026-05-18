@@ -7,7 +7,7 @@ public class RoomCameraController : MonoBehaviour
 
     [Header("Follow")]
     [SerializeField] private Transform target;
-    [SerializeField] private float smoothTime = 0.18f;
+    [SerializeField] private float smoothTime = 0.08f;
     [SerializeField] private float roomSwitchDuration = 0.35f;
     [SerializeField] private Vector2 followOffset;
 

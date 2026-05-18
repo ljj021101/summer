@@ -1327,6 +1327,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1465,10 +1466,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomCameraController
   target: {fileID: 0}
-  smoothTime: 0.18
+  smoothTime: 0.08
   roomSwitchDuration: 0.35
   followOffset: {x: 0, y: 0}
   currentRoom: {fileID: 0}
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2273b1ffb0ee1a84ab1329a7dd79a5fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameFrameRate
+  targetFrameRate: 120
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2637,6 +2651,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3bebdad578cff8428e33bc86cc1fb4a, type: 3}
+--- !u!1001 &1259300108
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 33.321
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.281
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569474081920309008, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577598542113066472, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
+      propertyPath: m_Name
+      value: Spike9 (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6b5bf24f571f5ec499f44deeea02fca2, type: 3}
 --- !u!1001 &1271855761
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4241,3 +4312,4 @@ SceneRoots:
   - {fileID: 1962883782}
   - {fileID: 154367305}
   - {fileID: 1165936498}
+  - {fileID: 1259300108}
