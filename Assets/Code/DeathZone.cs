@@ -40,8 +40,30 @@ public class DeathZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        PlayerHurtbox hurtbox = other.GetComponent<PlayerHurtbox>();
+
+        if (hurtbox != null)
+        {
+            if (hurtbox.CheckpointController != null)
+            {
+                hurtbox.CheckpointController.Die();
+            }
+
+            return;
+        }
+
         PlayerCheckpointController checkpointController = other.GetComponentInParent<PlayerCheckpointController>();
         bool isPlayer = checkpointController != null || other.CompareTag(playerTag);
+
+        if (checkpointController != null && checkpointController.GetComponentInChildren<PlayerHurtbox>() != null)
+        {
+            return;
+        }
+
+        if (other.isTrigger)
+        {
+            return;
+        }
 
         if (!isPlayer || checkpointController == null)
         {

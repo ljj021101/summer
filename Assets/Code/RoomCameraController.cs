@@ -10,6 +10,7 @@ public class RoomCameraController : MonoBehaviour
     [SerializeField] private float smoothTime = 0.08f;
     [SerializeField] private float roomSwitchDuration = 0.35f;
     [SerializeField] private Vector2 followOffset;
+    [SerializeField] private float cameraZPosition = -10f;
 
     [Header("Room")]
     [SerializeField] private Room currentRoom;
@@ -30,6 +31,10 @@ public class RoomCameraController : MonoBehaviour
 
         Instance = this;
         roomCamera = GetComponent<Camera>();
+
+        Vector3 position = transform.position;
+        position.z = cameraZPosition;
+        transform.position = position;
     }
 
     private void Start()
@@ -132,7 +137,7 @@ public class RoomCameraController : MonoBehaviour
     private Vector3 GetDesiredPosition()
     {
         Vector3 desiredPosition = target.position + (Vector3)followOffset;
-        desiredPosition.z = transform.position.z;
+        desiredPosition.z = cameraZPosition;
 
         return ClampPositionToCurrentRoom(desiredPosition);
     }

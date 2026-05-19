@@ -31,6 +31,7 @@ public class PlatformerPlayerController : MonoBehaviour
     [SerializeField] private Vector2 wallJumpForce = new Vector2(6f, 6f);
     [SerializeField] private float wallJumpInputLockDuration = 0.18f;
     [SerializeField] private float wallJumpSpinInputWindow = 0.1f;
+    [SerializeField] private float wallCoyoteTime = 0.05f;
     [SerializeField] private float wallSlideSpeed = 2f;
 
     [Header("Animation")]
@@ -62,12 +63,14 @@ public class PlatformerPlayerController : MonoBehaviour
     private bool hasCheckedGround;
     private bool isTouchingWall;
     private int wallJumpDirection;
+    private int lastWallJumpDirection;
     private int wallJumpBlockedMoveDirection;
     private int airJumpsRemaining;
     private int facingDirection = 1;
     private float lastFallSpeed;
     private float lastGroundedTime = float.NegativeInfinity;
     private float wallJumpInputLockUntil = float.NegativeInfinity;
+    private float lastWallTouchTime = float.NegativeInfinity;
     private float pendingWallJumpSpinUntil = float.NegativeInfinity;
     private int pendingWallJumpSpinDirection;
     private Vector2 currentLandingSquashScale = Vector2.one;
@@ -303,6 +306,7 @@ public class PlatformerPlayerController : MonoBehaviour
         {
             isTouchingWall = true;
             wallJumpDirection = 1;
+            RememberWallTouch();
             airJumpsRemaining = maxAirJumps;
             return;
         }
@@ -311,8 +315,15 @@ public class PlatformerPlayerController : MonoBehaviour
         {
             isTouchingWall = true;
             wallJumpDirection = -1;
+            RememberWallTouch();
             airJumpsRemaining = maxAirJumps;
         }
+    }
+
+    private void RememberWallTouch()
+    {
+        lastWallJumpDirection = wallJumpDirection;
+        lastWallTouchTime = Time.time;
     }
 
     private bool IsTouchingWall(BoxCollider2D wallCheckCollider, Vector2 direction, float requiredNormalX, LayerMask currentWallLayer)
@@ -349,6 +360,12 @@ public class PlatformerPlayerController : MonoBehaviour
             return;
         }
 
+        if (CanUseWallCoyoteJump())
+        {
+            PerformWallJump(lastWallJumpDirection);
+            return;
+        }
+
         if (CanUseCoyoteJump())
         {
             PerformGroundJump();
@@ -382,31 +399,41 @@ public class PlatformerPlayerController : MonoBehaviour
 
     private void PerformWallJump()
     {
-        facingDirection = wallJumpDirection;
+        PerformWallJump(wallJumpDirection);
+    }
+
+    private void PerformWallJump(int jumpDirection)
+    {
+        facingDirection = jumpDirection;
 
         if (flipSprite && spriteRenderer != null)
         {
             spriteRenderer.flipX = facingDirection < 0;
         }
 
-        wallJumpBlockedMoveDirection = -wallJumpDirection;
+        wallJumpBlockedMoveDirection = -jumpDirection;
         wallJumpInputLockUntil = Time.time + wallJumpInputLockDuration;
-        rb.linearVelocity = new Vector2(wallJumpDirection * wallJumpForce.x, wallJumpForce.y);
+        rb.linearVelocity = new Vector2(jumpDirection * wallJumpForce.x, wallJumpForce.y);
 
-        if (IsPressingAwayFromWall())
+        if (IsPressingAwayFromWall(jumpDirection))
         {
             PlayAirJumpSpin();
             ClearPendingWallJumpSpin();
             return;
         }
 
-        pendingWallJumpSpinDirection = wallJumpDirection;
+        pendingWallJumpSpinDirection = jumpDirection;
         pendingWallJumpSpinUntil = Time.time + wallJumpSpinInputWindow;
     }
 
     private bool CanUseCoyoteJump()
     {
         return Time.time - lastGroundedTime <= coyoteTime;
+    }
+
+    private bool CanUseWallCoyoteJump()
+    {
+        return lastWallJumpDirection != 0 && Time.time - lastWallTouchTime <= wallCoyoteTime;
     }
 
     private bool IsPressingTowardWall()
@@ -417,8 +444,13 @@ public class PlatformerPlayerController : MonoBehaviour
 
     private bool IsPressingAwayFromWall()
     {
-        return wallJumpDirection > 0 && moveInput > 0.01f ||
-            wallJumpDirection < 0 && moveInput < -0.01f;
+        return IsPressingAwayFromWall(wallJumpDirection);
+    }
+
+    private bool IsPressingAwayFromWall(int jumpDirection)
+    {
+        return jumpDirection > 0 && moveInput > 0.01f ||
+            jumpDirection < 0 && moveInput < -0.01f;
     }
 
     private void HandlePendingWallJumpSpin()
