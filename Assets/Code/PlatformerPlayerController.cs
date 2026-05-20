@@ -11,6 +11,7 @@ public class PlatformerPlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 14f;
     [SerializeField] private float airJumpForce = 11f;
     [SerializeField, Range(0.1f, 1f)] private float jumpCutMultiplier = 0.45f;
+    [SerializeField] private float maxFallSpeed = 14f;
     [SerializeField] private int maxAirJumps = 1;
 
     [Header("Ground Check")]
@@ -152,6 +153,7 @@ public class PlatformerPlayerController : MonoBehaviour
         );
 
         float verticalSpeed = GetWallSlideVerticalSpeed(rb.linearVelocity.y);
+        verticalSpeed = Mathf.Max(verticalSpeed, -maxFallSpeed);
         rb.linearVelocity = new Vector2(newHorizontalSpeed, verticalSpeed);
     }
 
