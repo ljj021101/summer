@@ -82,6 +82,8 @@ public class PlatformerPlayerController : MonoBehaviour
     private Coroutine airJumpSpinRoutine;
     private float animatorBaseSpeed = 1f;
 
+    public int FacingDirection => facingDirection >= 0 ? 1 : -1;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();

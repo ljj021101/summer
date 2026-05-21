@@ -59,7 +59,7 @@ public class LevelManager : MonoBehaviour
 
     public void RefreshCoinTotalFromScene()
     {
-        CollectableCoin[] coins = FindObjectsByType<CollectableCoin>(FindObjectsSortMode.None);
+        CollectableCoin[] coins = FindObjectsByType<CollectableCoin>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         coinTotal = coins.Length;
     }
 

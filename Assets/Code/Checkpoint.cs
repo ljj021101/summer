@@ -75,9 +75,22 @@ public class Checkpoint : MonoBehaviour
             checkpointController = other.GetComponentInParent<PlayerCheckpointController>();
         }
 
+        bool changedCheckpoint = false;
         if (checkpointController != null)
         {
-            checkpointController.SetCheckpoint(this);
+            changedCheckpoint = checkpointController.SetCheckpoint(this);
+        }
+
+        bool bankedCoins = false;
+        PlayerCoinCollector coinCollector = other.GetComponentInParent<PlayerCoinCollector>();
+        if (coinCollector != null)
+        {
+            bankedCoins = coinCollector.BankCarriedCoins();
+        }
+
+        if (checkpointController != null && (changedCheckpoint || bankedCoins))
+        {
+            checkpointController.ShowSaveIcon();
         }
     }
 

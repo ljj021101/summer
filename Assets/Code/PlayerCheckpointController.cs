@@ -22,19 +22,32 @@ public class PlayerCheckpointController : MonoBehaviour
     [SerializeField] private Color dustColorB = new Color(0.28f, 0.18f, 0.32f, 1f);
     [SerializeField] private Color dustColorC = Color.white;
 
+    [Header("Save Icon")]
+    [SerializeField] private Sprite saveIconSprite;
+    [SerializeField] private Vector3 saveIconLocalOffset = new Vector3(0f, 1.25f, 0f);
+    [SerializeField] private float saveIconScale = 1f;
+    [SerializeField] private float saveIconVisibleDuration = 0.45f;
+    [SerializeField] private float saveIconFadeDuration = 0.25f;
+    [SerializeField] private Color saveIconColor = Color.white;
+
     private Rigidbody2D rb;
     private PlatformerPlayerController playerController;
+    private PlayerCoinCollector coinCollector;
     private Checkpoint currentCheckpoint;
     private Vector3 fallbackRespawnPosition;
     private float respawnZPosition;
     private Renderer[] visualRenderers;
     private static Sprite dustSprite;
+    private static Sprite generatedSaveIconSprite;
+    private SpriteRenderer saveIconRenderer;
+    private Coroutine saveIconRoutine;
     private bool isRespawning;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         playerController = GetComponent<PlatformerPlayerController>();
+        coinCollector = GetComponent<PlayerCoinCollector>();
 
         if (spriteRenderer == null)
         {
@@ -67,14 +80,21 @@ public class PlayerCheckpointController : MonoBehaviour
         }
     }
 
-    public void SetCheckpoint(Checkpoint checkpoint)
+    public bool SetCheckpoint(Checkpoint checkpoint)
     {
         if (checkpoint == null)
         {
-            return;
+            return false;
         }
 
+        bool changedCheckpoint = currentCheckpoint == null || currentCheckpoint != checkpoint;
         currentCheckpoint = checkpoint;
+        return changedCheckpoint;
+    }
+
+    public void ShowSaveIcon()
+    {
+        PlaySaveIcon();
     }
 
     public void Die()
@@ -100,6 +120,11 @@ public class PlayerCheckpointController : MonoBehaviour
     private IEnumerator RespawnRoutine()
     {
         isRespawning = true;
+
+        if (coinCollector != null)
+        {
+            coinCollector.ReturnCarriedCoins();
+        }
 
         SpawnDeathDust();
         SetPlayerActive(false);
@@ -191,6 +216,150 @@ public class PlayerCheckpointController : MonoBehaviour
         }
 
         return colorIndex == 1 ? dustColorB : dustColorC;
+    }
+
+    private void PlaySaveIcon()
+    {
+        EnsureSaveIconRenderer();
+
+        if (saveIconRenderer == null)
+        {
+            return;
+        }
+
+        if (saveIconRoutine != null)
+        {
+            StopCoroutine(saveIconRoutine);
+        }
+
+        saveIconRoutine = StartCoroutine(ShowSaveIconRoutine());
+    }
+
+    private IEnumerator ShowSaveIconRoutine()
+    {
+        saveIconRenderer.enabled = true;
+        SetSaveIconAlpha(1f);
+
+        if (saveIconVisibleDuration > 0f)
+        {
+            yield return new WaitForSeconds(saveIconVisibleDuration);
+        }
+
+        if (saveIconFadeDuration > 0f)
+        {
+            float elapsed = 0f;
+
+            while (elapsed < saveIconFadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                float alpha = 1f - Mathf.Clamp01(elapsed / saveIconFadeDuration);
+                SetSaveIconAlpha(alpha);
+                yield return null;
+            }
+        }
+
+        SetSaveIconAlpha(0f);
+        saveIconRenderer.enabled = false;
+        saveIconRoutine = null;
+    }
+
+    private void EnsureSaveIconRenderer()
+    {
+        if (saveIconRenderer != null)
+        {
+            return;
+        }
+
+        GameObject iconObject = new GameObject("Save Icon");
+        iconObject.transform.SetParent(transform, false);
+        iconObject.transform.localPosition = saveIconLocalOffset;
+        iconObject.transform.localScale = Vector3.one * GetSaveIconScale();
+
+        saveIconRenderer = iconObject.AddComponent<SpriteRenderer>();
+        saveIconRenderer.sprite = saveIconSprite != null ? saveIconSprite : GetGeneratedSaveIconSprite();
+        saveIconRenderer.enabled = false;
+
+        if (spriteRenderer != null)
+        {
+            saveIconRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            saveIconRenderer.sortingOrder = spriteRenderer.sortingOrder + 3;
+        }
+
+        SetSaveIconAlpha(0f);
+    }
+
+    private float GetSaveIconScale()
+    {
+        if (saveIconSprite != null)
+        {
+            return saveIconScale;
+        }
+
+        return Mathf.Max(0.75f, saveIconScale);
+    }
+
+    private void SetSaveIconAlpha(float alpha)
+    {
+        if (saveIconRenderer == null)
+        {
+            return;
+        }
+
+        Color color = saveIconColor;
+        color.a *= alpha;
+        saveIconRenderer.color = color;
+    }
+
+    private static Sprite GetGeneratedSaveIconSprite()
+    {
+        if (generatedSaveIconSprite != null)
+        {
+            return generatedSaveIconSprite;
+        }
+
+        Texture2D texture = new Texture2D(8, 8);
+        texture.filterMode = FilterMode.Point;
+
+        Color clear = new Color(0f, 0f, 0f, 0f);
+        Color body = Color.white;
+        Color detail = new Color(0.2f, 0.25f, 0.35f, 1f);
+
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                texture.SetPixel(x, y, clear);
+            }
+        }
+
+        for (int y = 1; y < 7; y++)
+        {
+            for (int x = 1; x < 7; x++)
+            {
+                texture.SetPixel(x, y, body);
+            }
+        }
+
+        texture.SetPixel(6, 6, clear);
+
+        for (int x = 2; x < 6; x++)
+        {
+            texture.SetPixel(x, 5, detail);
+        }
+
+        texture.SetPixel(5, 5, body);
+
+        for (int x = 2; x < 6; x++)
+        {
+            texture.SetPixel(x, 2, detail);
+        }
+
+        texture.SetPixel(2, 3, detail);
+        texture.SetPixel(5, 3, detail);
+        texture.Apply();
+
+        generatedSaveIconSprite = Sprite.Create(texture, new Rect(0f, 0f, 8f, 8f), new Vector2(0.5f, 0.5f), 8f);
+        return generatedSaveIconSprite;
     }
 
     private static Sprite GetDustSprite()

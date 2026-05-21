@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class QuitGameOnEscape : MonoBehaviour
 {
+    [SerializeField] private string levelSelectSceneName = "Level Select";
+
     private void Update()
     {
         if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
@@ -10,7 +13,30 @@ public class QuitGameOnEscape : MonoBehaviour
             return;
         }
 
+        HandleEscape();
+    }
+
+    private void HandleEscape()
+    {
+        if (LevelManager.Instance != null)
+        {
+            ReturnToLevelSelect();
+            return;
+        }
+
         QuitGame();
+    }
+
+    private void ReturnToLevelSelect()
+    {
+        Time.timeScale = 1f;
+        LevelManager.Instance.RefreshCoinTotalFromScene();
+        GameProgressStore.SaveToPlayerPrefs();
+
+        if (!string.IsNullOrWhiteSpace(levelSelectSceneName))
+        {
+            SceneManager.LoadScene(levelSelectSceneName);
+        }
     }
 
     private void QuitGame()

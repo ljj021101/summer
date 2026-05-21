@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: LevelCatalog
   m_EditorClassIdentifier: Assembly-CSharp::LevelCatalog
   levels:
-  - levelId: Level 0
+  - levelId: Tutorial
     displayName: Tutorial
-    scene: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
-    sceneName: SampleScene
-    scenePath: Assets/Scenes/SampleScene.unity
+    scene: {fileID: 102900000, guid: ff48d32ca84081d498465ef5bb9d3383, type: 3}
+    sceneName: Tutorial
+    scenePath: Assets/Scenes/Tutorial.unity
   - levelId: Level 1
     displayName: Level 1
     scene: {fileID: 102900000, guid: 1f6f54ca03c1ab54ebab62e5524243ce, type: 3}

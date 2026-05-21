@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6970040901490852399}
   - component: {fileID: 5481520175848089720}
   - component: {fileID: 791393607888534529}
+  - component: {fileID: 2687586219335200306}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -30,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 2476557368438046276}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.01, y: -3.35, z: 0}
+  m_LocalPosition: {x: -8.31, y: -3.91, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -86,6 +87,7 @@ MonoBehaviour:
   jumpForce: 9
   airJumpForce: 7
   jumpCutMultiplier: 0.45
+  maxFallSpeed: 14
   maxAirJumps: 1
   groundCheckCollider: {fileID: 887104704261296512}
   groundLayer:
@@ -110,15 +112,15 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3707715863368221248}
   flipSprite: 1
   visualRoot: {fileID: 8763061147496553055}
-  landingSquashScale: {x: 1.1, y: 0.9}
-  maxLandingSquashScale: {x: 1.4, y: 0.6}
+  landingSquashScale: {x: 1.2, y: 0.8}
+  maxLandingSquashScale: {x: 1.5, y: 0.5}
   minLandingSquashSpeed: 2
   maxLandingSquashSpeed: 12
   landingSquashDuration: 0.08
   landingRecoverDuration: 0.08
   visualHeight: 0.16
   spinOnAirJump: 1
-  airJumpSpinDuration: 0.4
+  airJumpSpinDuration: 0.35
 --- !u!61 &6970040901490852399
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -191,6 +193,12 @@ MonoBehaviour:
   dustColorA: {r: 0.6784314, g: 0.6, b: 0.6745098, a: 1}
   dustColorB: {r: 0.60784316, g: 0.5254902, b: 0.6117647, a: 1}
   dustColorC: {r: 0.2392157, g: 0.14509805, b: 0.23137257, a: 1}
+  saveIconSprite: {fileID: 21300000, guid: 732164d9035785047b79d33ee6a70e6b, type: 3}
+  saveIconLocalOffset: {x: 0, y: 0.15, z: 0}
+  saveIconScale: 0.1
+  saveIconVisibleDuration: 0.45
+  saveIconFadeDuration: 0.25
+  saveIconColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &791393607888534529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,6 +211,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c10b886c8dbca24f8100b95090f6754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuitGameOnEscape
+  levelSelectSceneName: Level Select
+--- !u!114 &2687586219335200306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476557368438046276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d863dbc60bc702a4a8f671e8f6cd8d17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCoinCollector
+  carryRoot: {fileID: 4604201487546226686}
 --- !u!1 &2684541158898992042
 GameObject:
   m_ObjectHideFlags: 0
