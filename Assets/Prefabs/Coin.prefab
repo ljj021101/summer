@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectableCoin
   coinId: coin_8a3087b8230341bab8c92546c3f6423e
-  collectedAlpha: 0.45
+  collectedAlpha: 0.2
   carriedBehindDistance: 0.55
   carriedHeight: 0.35
   carriedExtraOffset: {x: 0.18, y: 0.12}
