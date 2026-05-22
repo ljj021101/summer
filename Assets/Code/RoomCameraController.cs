@@ -20,6 +20,7 @@ public class RoomCameraController : MonoBehaviour
     private Vector3 roomSwitchStartPosition;
     private float roomSwitchTimer;
     private bool isSwitchingRooms;
+    private bool isLocked;
 
     private void Awake()
     {
@@ -52,6 +53,11 @@ public class RoomCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (isLocked)
+        {
+            return;
+        }
+
         if (target == null)
         {
             return;
@@ -100,6 +106,13 @@ public class RoomCameraController : MonoBehaviour
         roomSwitchTimer = 0f;
         isSwitchingRooms = true;
         velocity = Vector3.zero;
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+        velocity = Vector3.zero;
+        isSwitchingRooms = false;
     }
 
     private void UpdateCurrentRoom()
