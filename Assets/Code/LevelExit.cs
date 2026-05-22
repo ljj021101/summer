@@ -7,6 +7,10 @@ public class LevelExit : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private string levelSelectSceneName = "Level Select";
 
+    [Header("Idle Visual")]
+    [SerializeField] private Transform rotatingVisual;
+    [SerializeField] private float clockwiseRotationSpeed = 90f;
+
     [Header("Exit Effect")]
     [SerializeField] private float swirlDuration = 1.2f;
     [SerializeField] private float swirlStartSpinSpeed = 180f;
@@ -16,6 +20,12 @@ public class LevelExit : MonoBehaviour
     [SerializeField] private Color gizmoColor = new Color(0.5f, 0.9f, 1f, 0.25f);
 
     private bool isCompleting;
+
+    private void Update()
+    {
+        Transform targetVisual = rotatingVisual != null ? rotatingVisual : transform;
+        targetVisual.Rotate(0f, 0f, -clockwiseRotationSpeed * Time.deltaTime, Space.Self);
+    }
 
     private void Reset()
     {
@@ -53,15 +63,17 @@ public class LevelExit : MonoBehaviour
         Transform player = playerController != null ? playerController.transform : other.transform;
         Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
         PlayerCheckpointController checkpointController = player.GetComponent<PlayerCheckpointController>();
+        PlayerCoinCollector coinCollector = player.GetComponent<PlayerCoinCollector>();
         Animator playerAnimator = player.GetComponentInChildren<Animator>();
 
-        StartCoroutine(CompleteLevelRoutine(player, playerController, checkpointController, playerRb, playerAnimator, GetSwirlCenter()));
+        StartCoroutine(CompleteLevelRoutine(player, playerController, checkpointController, coinCollector, playerRb, playerAnimator, GetSwirlCenter()));
     }
 
     private IEnumerator CompleteLevelRoutine(
         Transform player,
         PlatformerPlayerController playerController,
         PlayerCheckpointController checkpointController,
+        PlayerCoinCollector coinCollector,
         Rigidbody2D playerRb,
         Animator playerAnimator,
         Vector3 swirlCenter)
@@ -71,6 +83,15 @@ public class LevelExit : MonoBehaviour
         if (LevelManager.Instance != null)
         {
             LevelManager.Instance.RefreshCoinTotalFromScene();
+        }
+
+        if (coinCollector != null)
+        {
+            coinCollector.BankCarriedCoins();
+        }
+
+        if (LevelManager.Instance != null)
+        {
             LevelManager.Instance.MarkCompleted();
         }
 
@@ -126,7 +147,7 @@ public class LevelExit : MonoBehaviour
             float easedProgress = Mathf.SmoothStep(0f, 1f, progress);
             float spinSpeed = Mathf.Lerp(swirlStartSpinSpeed, swirlEndSpinSpeed, easedProgress);
 
-            currentAngle += spinSpeed * Time.deltaTime;
+            currentAngle -= spinSpeed * Time.deltaTime;
 
             if (player != null)
             {
