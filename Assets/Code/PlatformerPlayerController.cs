@@ -48,6 +48,7 @@ public class PlatformerPlayerController : MonoBehaviour
     [SerializeField] private float maxLandingSquashSpeed = 12f;
     [SerializeField] private float landingSquashDuration = 0.08f;
     [SerializeField] private float landingRecoverDuration = 0.12f;
+    [SerializeField] private float landingSquashCooldown = 0.05f;
     [SerializeField] private float visualHeight = 0f;
 
     [Header("Double Jump Spin")]
@@ -69,6 +70,9 @@ public class PlatformerPlayerController : MonoBehaviour
     private int airJumpsRemaining;
     private int facingDirection = 1;
     private float lastFallSpeed;
+    private float peakAirborneFallSpeed;
+    private float lastLandingSquashTime = float.NegativeInfinity;
+    private bool hasAirborneFallSpeed;
     private float lastGroundedTime = float.NegativeInfinity;
     private float wallJumpInputLockUntil = float.NegativeInfinity;
     private float lastWallTouchTime = float.NegativeInfinity;
@@ -138,6 +142,8 @@ public class PlatformerPlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        TrackAirborneFallSpeed();
+
         float effectiveMoveInput = GetEffectiveMoveInput();
         float targetSpeed = effectiveMoveInput * moveSpeed;
         float currentHorizontalSpeed = rb.linearVelocity.x;
@@ -278,14 +284,14 @@ public class PlatformerPlayerController : MonoBehaviour
         );
         isGrounded = groundHit.collider != null && groundHit.normal.y >= groundNormalThreshold;
 
-        if (hasCheckedGround && isGrounded && !wasGrounded)
+        if (ShouldPlayLandingSquash())
         {
-            PlayLandingSquash(lastFallSpeed);
+            PlayLandingSquash(Mathf.Max(lastFallSpeed, peakAirborneFallSpeed));
         }
 
         if (!isGrounded)
         {
-            lastFallSpeed = Mathf.Max(0f, -rb.linearVelocity.y);
+            RecordFallSpeed(-rb.linearVelocity.y);
         }
 
         if (isGrounded)
@@ -293,10 +299,61 @@ public class PlatformerPlayerController : MonoBehaviour
             ClearPendingWallJumpSpin();
             lastGroundedTime = Time.time;
             airJumpsRemaining = maxAirJumps;
+
+            if (rb.linearVelocity.y >= -0.05f)
+            {
+                lastFallSpeed = 0f;
+                peakAirborneFallSpeed = 0f;
+                hasAirborneFallSpeed = false;
+            }
         }
 
         wasGrounded = isGrounded;
         hasCheckedGround = true;
+    }
+
+    private void TrackAirborneFallSpeed()
+    {
+        RecordFallSpeed(-rb.linearVelocity.y);
+    }
+
+    private void RecordFallSpeed(float fallSpeed)
+    {
+        if (fallSpeed <= 0f)
+        {
+            return;
+        }
+
+        lastFallSpeed = fallSpeed;
+        peakAirborneFallSpeed = Mathf.Max(peakAirborneFallSpeed, fallSpeed);
+        hasAirborneFallSpeed = true;
+    }
+
+    private void ResetLandingFallSpeed()
+    {
+        lastFallSpeed = 0f;
+        peakAirborneFallSpeed = 0f;
+        hasAirborneFallSpeed = false;
+    }
+
+    private bool ShouldPlayLandingSquash()
+    {
+        if (!hasCheckedGround || !isGrounded)
+        {
+            return false;
+        }
+
+        if (Time.time - lastLandingSquashTime < landingSquashCooldown)
+        {
+            return false;
+        }
+
+        bool newlyGrounded = !wasGrounded;
+        bool recoveredGroundedWhileFalling = hasAirborneFallSpeed &&
+            Mathf.Max(lastFallSpeed, peakAirborneFallSpeed) >= minLandingSquashSpeed &&
+            rb.linearVelocity.y >= -0.05f;
+
+        return newlyGrounded || recoveredGroundedWhileFalling;
     }
 
     private void CheckWall()
@@ -387,6 +444,7 @@ public class PlatformerPlayerController : MonoBehaviour
     private void PerformAirJump()
     {
         ClearPendingWallJumpSpin();
+        ResetLandingFallSpeed();
         UpdateFacingFromMoveInput();
         airJumpsRemaining--;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, airJumpForce);
@@ -396,6 +454,7 @@ public class PlatformerPlayerController : MonoBehaviour
     private void PerformGroundJump()
     {
         ClearPendingWallJumpSpin();
+        ResetLandingFallSpeed();
         airJumpsRemaining = maxAirJumps;
         lastGroundedTime = float.NegativeInfinity;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -408,6 +467,7 @@ public class PlatformerPlayerController : MonoBehaviour
 
     private void PerformWallJump(int jumpDirection)
     {
+        ResetLandingFallSpeed();
         facingDirection = jumpDirection;
 
         if (flipSprite && spriteRenderer != null)
@@ -581,6 +641,8 @@ public class PlatformerPlayerController : MonoBehaviour
         {
             return;
         }
+
+        lastLandingSquashTime = Time.time;
 
         if (landingSquashRoutine != null)
         {

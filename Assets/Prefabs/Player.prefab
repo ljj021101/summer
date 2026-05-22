@@ -112,12 +112,13 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3707715863368221248}
   flipSprite: 1
   visualRoot: {fileID: 8763061147496553055}
-  landingSquashScale: {x: 1.2, y: 0.8}
+  landingSquashScale: {x: 1.1, y: 0.9}
   maxLandingSquashScale: {x: 1.5, y: 0.5}
-  minLandingSquashSpeed: 2
+  minLandingSquashSpeed: 4
   maxLandingSquashSpeed: 12
   landingSquashDuration: 0.08
   landingRecoverDuration: 0.08
+  landingSquashCooldown: 0.05
   visualHeight: 0.16
   spinOnAirJump: 1
   airJumpSpinDuration: 0.35
