@@ -15,11 +15,21 @@ MonoBehaviour:
   levels:
   - levelId: Tutorial
     displayName: Tutorial
+    modifiedLevelId: Tutorial-M
+    modifiedDisplayName: 
     scene: {fileID: 102900000, guid: ff48d32ca84081d498465ef5bb9d3383, type: 3}
+    modifiedScene: {fileID: 102900000, guid: e61ef3b1dbd000347aa901ab802d60ef, type: 3}
     sceneName: Tutorial
     scenePath: Assets/Scenes/Tutorial.unity
+    modifiedSceneName: Tutorial-M
+    modifiedScenePath: Assets/Scenes/Tutorial-M.unity
   - levelId: Level 1
     displayName: Level 1
+    modifiedLevelId: Level 1M
+    modifiedDisplayName: 
     scene: {fileID: 102900000, guid: 1f6f54ca03c1ab54ebab62e5524243ce, type: 3}
+    modifiedScene: {fileID: 102900000, guid: 1be4cdee90c5c1d429347e766671db67, type: 3}
     sceneName: Level 1
     scenePath: Assets/Scenes/Level 1.unity
+    modifiedSceneName: Level 1M
+    modifiedScenePath: Assets/Scenes/Level 1M.unity

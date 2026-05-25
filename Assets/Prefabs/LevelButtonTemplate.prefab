@@ -368,7 +368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6327264880927772911
 RectTransform:
   m_ObjectHideFlags: 0
@@ -490,6 +490,9 @@ MonoBehaviour:
   levelNameText: {fileID: 8396618410123394492}
   coinProgressText: {fileID: 3648136086819571779}
   completedCheckmark: {fileID: 8185524350283897669}
+  tintTargets: []
+  unlockedTint: {r: 1, g: 1, b: 1, a: 1}
+  lockedTint: {r: 0.35, g: 0.35, b: 0.35, a: 1}
 --- !u!1 &8185524350283897669
 GameObject:
   m_ObjectHideFlags: 0
