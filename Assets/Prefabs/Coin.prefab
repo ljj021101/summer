@@ -51,10 +51,10 @@ MonoBehaviour:
   collectedAlpha: 0.2
   carriedBehindDistance: 0.55
   carriedHeight: 0.35
-  carriedExtraOffset: {x: 0.18, y: 0.12}
+  carriedExtraOffset: {x: 0.3, y: 0}
   followStopDistance: 0.18
   followFullSpeedDistance: 1.6
-  followMaxSpeed: 7
+  followMaxSpeed: 15
   collectDustCount: 18
   collectDustSize: 1
   collectDustGravityScale: 1.6
